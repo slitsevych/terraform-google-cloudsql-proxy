@@ -74,6 +74,8 @@ resource "google_compute_instance" "main" {
   machine_type = var.vm_machine_type
   zone         = var.vm_zone
 
+  allow_stopping_for_update = true
+
   boot_disk {
     initialize_params {
       image = module.gce_container_sqlproxy.source_image
