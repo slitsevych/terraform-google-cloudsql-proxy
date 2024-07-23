@@ -15,12 +15,18 @@ variable "cos_image_family" {
 }
 
 variable "container_image" {
-  description = "Source container image. Example : eu.gcr.io/cloudsql-docker/gce-proxy:1.32.0"
+  description = "Source container image. Example : eu.gcr.io/cloudsql-docker/gce-proxy:1.36.0"
   type        = string
 }
 
 variable "container_args" {
   description = "Containers arguments."
+  type        = list(string)
+  default     = []
+}
+
+variable "custom_network_tags" {
+  description = "custom network tags."
   type        = list(string)
   default     = []
 }
@@ -65,8 +71,8 @@ variable "vm_zone" {
   default     = null
 }
 
-variable "allow_public_ip" {
-  description = "Generate an ephemeral public if true"
+variable "enable_public_ip" {
+  description = "Create static public IP if true"
   type        = bool
   default     = false
 }

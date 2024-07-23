@@ -64,6 +64,11 @@ resource "google_compute_firewall" "inbound" {
   target_tags   = [local.network_tag]
 }
 
+resource "google_compute_address" "sqlproxy_address" {
+  count = var.enable_public_ip ? 1 : 0
+  name = "${local.instance_name}-ip"
+}
+
 resource "google_compute_instance" "main" {
   name         = local.instance_name
   machine_type = var.vm_machine_type
@@ -72,6 +77,7 @@ resource "google_compute_instance" "main" {
   boot_disk {
     initialize_params {
       image = module.gce_container_sqlproxy.source_image
+      size  = "10"
     }
   }
 
@@ -80,10 +86,10 @@ resource "google_compute_instance" "main" {
     subnetwork = var.vm_subnetwork
 
     dynamic "access_config" {
-      for_each = var.allow_public_ip ? [1] : []
+      for_each = var.enable_public_ip ? [1] : []
 
       content {
-        // Ephemeral public IP
+        nat_ip = google_compute_address.sqlproxy_address[0].address
       }
     }
   }
@@ -91,9 +97,9 @@ resource "google_compute_instance" "main" {
   metadata = {
     gce-container-declaration    = module.gce_container_sqlproxy.metadata_value
     google-logging-enabled       = "true"
-    google-logging-use-fluentbit = "true"
+    google-logging-use-fluentbit = "false"
     google-monitoring-enabled    = "true"
-    block-project-ssh-keys       = true
+    block-project-ssh-keys       = false
   }
 
   labels = merge(
@@ -101,14 +107,17 @@ resource "google_compute_instance" "main" {
     var.labels
   )
 
-  tags = [
-    local.network_tag
-  ]
+  tags = concat([local.network_tag], var.custom_network_tags)
 
   service_account {
     email = google_service_account.main.email
     scopes = [
       "https://www.googleapis.com/auth/sqlservice.admin",
+      "https://www.googleapis.com/auth/cloud-platform",
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring.write",
+      "https://www.googleapis.com/auth/devstorage.read_only"
     ]
   }
 
