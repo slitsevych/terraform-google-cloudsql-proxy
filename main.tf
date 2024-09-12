@@ -24,7 +24,7 @@ resource "google_project_iam_member" "cloudsql_instance_client_role_to_main_serv
 
 module "gce_container_sqlproxy" {
   source  = "terraform-google-modules/container-vm/google"
-  version = "~> 3.1.1"
+  version = "3.1.1"
 
   cos_image_family = var.cos_image_family
   container = {
