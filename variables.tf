@@ -71,6 +71,12 @@ variable "vm_zone" {
   default     = null
 }
 
+variable "provisioning_model" {
+  description = "provisioning_model"
+  type        = string
+  default     = "STANDARD"
+}
+
 variable "enable_public_ip" {
   description = "Create static public IP if true"
   type        = bool

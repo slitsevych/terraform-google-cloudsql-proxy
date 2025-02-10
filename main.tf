@@ -75,6 +75,10 @@ resource "google_compute_instance" "main" {
   machine_type = var.vm_machine_type
   zone         = var.vm_zone
 
+  provisioning_model = var.provisioning_model
+  preemptible        = var.provisioning_model == "SPOT" ? true : false
+  automatic_restart  = var.provisioning_model == "SPOT" ? false : true
+
   allow_stopping_for_update = true
 
   boot_disk {
