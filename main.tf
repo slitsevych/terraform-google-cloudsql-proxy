@@ -79,6 +79,8 @@ resource "google_compute_instance" "main" {
     provisioning_model = var.provisioning_model
     preemptible        = var.provisioning_model == "SPOT" ? true : false
     automatic_restart  = var.provisioning_model == "SPOT" ? false : true
+    on_host_maintenance = var.provisioning_model == "SPOT" ? "TERMINATE" : "MIGRATE"
+    instance_termination_action = var.provisioning_model == "SPOT" ? "STOP" : null
   }
   allow_stopping_for_update = true
 
