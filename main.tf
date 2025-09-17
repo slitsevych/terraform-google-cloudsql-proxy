@@ -24,7 +24,7 @@ resource "google_project_iam_member" "cloudsql_instance_client_role_to_main_serv
 
 module "gce_container_sqlproxy" {
   source  = "terraform-google-modules/container-vm/google"
-  source = "git::https://github.com/terraform-google-modules/terraform-google-container-vm.git?ref=main"
+  version = "git::https://github.com/terraform-google-modules/terraform-google-container-vm.git?ref=main"
 
   # version = "~> 3.2"
 
